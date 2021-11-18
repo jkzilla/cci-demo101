@@ -12,15 +12,15 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    environment:
-      theDate: empty
     steps:
       - checkout
       - run:
           name: "Say date" 
           command: |
+            mkdir tmp
             date +%m-%d-%Y
-            echo 'EXPORT theDate="'date +%m-%d-%Y'"' >> $BASH_ENV
+            echo 'EXPORT theDate='date +%m-%d-%Y'' >> $BASH_ENV
+            echo date +%m-%d-%Y > /tmp/encap-staging-no-color_'date +%m-%d-%Y'.txt
             echo $theDate
 
 # Invoke jobs via workflows
