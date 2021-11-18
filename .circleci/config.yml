@@ -27,9 +27,7 @@ jobs:
       - run: echo "export BOB=$BAZ" >> workspace/new-env-vars
       - run: cat workspace/new-env-vars 
       - run: cat workspace/new-env-vars >> $BASH_ENV
-      - run: echo ${FOO:-NULL}
-      - run: echo ${BAZ:-NULL}
-      - run: echo ${BOB:-NULL}
+      - run: echo ${DATETIME}
       - persist_to_workspace:
           root: workspace
           paths:
