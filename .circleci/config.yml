@@ -12,7 +12,10 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-
+    parameters:
+      date:
+        type: string
+        default: none
     steps:
       - checkout
       - run:
@@ -21,10 +24,12 @@ jobs:
             mkdir tmp
             date +%m-%d-%Y
             echo 'EXPORT theDate='date +%m-%d-%Y'' >> $BASH_ENV
-            echo date +%m-%d-%Y > /tmp/artifacts/encap-staging-no-color_'date +%m-%d-%Y'.txt
+            source $BASH_ENV
+            mkdir /tmp/artifacts;
+            echo date +%m-%d-%Y > /tmp/artifacts/encap-staging-no-color_$theDate.txt
             echo $theDate
             echo "my artifact file" > /tmp/artifact-1;
-            mkdir /tmp/artifacts;
+
             echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
 
       - store_artifacts:
