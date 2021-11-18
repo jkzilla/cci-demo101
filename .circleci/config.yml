@@ -18,7 +18,7 @@ jobs:
         default: none
     steps:
       - checkout
-            - run:
+      - run:
           name: set var
           command: echo "export BAZ=baz.`date +%Y%m%d.%H%M`" >> $BASH_ENV
       - run: echo "$BAZ"
