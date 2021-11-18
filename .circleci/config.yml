@@ -19,8 +19,8 @@ jobs:
       - run:
           name: "Say date" 
           command: |
-            date='date +%m-%d-%Y'
-            echo 'EXPORT theDate="$date"' >> $BASH_ENV
+            date +%m-%d-%Y
+            echo 'EXPORT theDate="'date +%m-%d-%Y'"' >> $BASH_ENV
             echo $theDate
 
 # Invoke jobs via workflows
