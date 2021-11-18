@@ -24,7 +24,7 @@ jobs:
             mkdir tmp
             date +%m-%d-%Y
             echo "EXPORT theDate="test"" >> $BASH_ENV
-            source $BASH_ENV
+            source .bashrc
       - store_artifacts:
           path: /tmp/artifact-1
           destination: artifact-file
