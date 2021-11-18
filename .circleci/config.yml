@@ -17,8 +17,8 @@ jobs:
       - run:
           name: "Say date" 
           command: |
-            echo "$(date +"%T")"
             echo "EXPORT $theDate=date +%m-%d-%Y" >> $BASH_ENV
+            echo "$theDate"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
