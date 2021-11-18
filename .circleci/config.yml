@@ -23,7 +23,7 @@ jobs:
           command: |
             mkdir tmp
             date +%m-%d-%Y
-            echo 'EXPORT theDate='date +%m-%d-%Y'' >> $BASH_ENV
+            EXPORT theDate='date +%m-%d-%Y' >> $BASH_ENV
             source $BASH_ENV
             # mkdir /tmp/artifacts;
             # echo date +%m-%d-%Y > /tmp/artifacts/encap-staging-no-color_$theDate.txt
