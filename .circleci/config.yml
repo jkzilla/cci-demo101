@@ -25,5 +25,5 @@ workflows:
   say-date-workflow:
     jobs:
       - test-orbs
-      - node/test
+      - node/test:
           version: "13.11.0"
