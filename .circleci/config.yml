@@ -26,4 +26,4 @@ workflows:
     jobs:
       - test-orbs
       - node/test
-          version: 13.11.0
+          version: "13.11.0"
