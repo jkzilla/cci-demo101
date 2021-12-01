@@ -14,9 +14,10 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run: |
-          pyenv versions
-      - run: sudo apt-get update && apt-get install -y python3.8
+      - run: 
+          command: |
+            sudo apt-get update && apt-get install -y python3.8
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
