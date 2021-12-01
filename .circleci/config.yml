@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run: 
           command: |
-            apt-get update && apt-get install -y python3.8
+            sudo apt update && sudo apt install -y python:3.8
 
 
 # Invoke jobs via workflows
