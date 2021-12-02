@@ -22,8 +22,6 @@ jobs:
           name: set var
           command: echo "export DATETIME=`date +%Y%m%d.%H%M`" >> $BASH_ENV
       - run: echo "$DATETIME"
-  save-workspace-env-vars:
-    steps:     
       - run: mkdir -p workspace
       - run: echo "export DATETIME=datetime.`date +%Y%m%d.%H%M%S`" >>workspace/new-env-vars
       - run: echo "export BOB=$BAZ" >> workspace/new-env-vars
@@ -41,13 +39,6 @@ jobs:
           root: workspace
           paths:
               - new-env-vars
-  echo-workspace:
-    steps:
-      - run: 
-          name: echo workspace vars
-          command: |
-            cat workspace/new-env-vars
-            echo ${DATETIME:-NULL}
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -55,5 +46,3 @@ workflows:
   say-date-workflow:
     jobs:
       - say-date
-      - save-workspace-env-vars
-      - echo-workspace
