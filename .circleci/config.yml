@@ -7,12 +7,12 @@ orbs:
   jq: circleci/jq@2.2.0
 
 parameters:
-  name: changesTrue
-  type: boolean
-  default: false
+  changesTrue:
+    type: boolean
+    default: false
 
 jobs:
-  generate-config:
+  getChanges:
     executor: continuation/default
     steps:
       - checkout
@@ -25,7 +25,10 @@ jobs:
             echo $LAST_SHA_REVISION 
             # compare to sha envvar of current build 
             # if they are the same then you circleci step halt
-          
-      - run:
-          name: use pipeline id to get revision of that scheduled pipeline
-            
+
+workflows:
+  version: 2
+  runDeployIfChangesTrue:
+    when: << pipeline.parameters.changesTrue >>
+    jobs:
+      - getChanges
