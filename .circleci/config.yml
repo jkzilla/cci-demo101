@@ -1,30 +1,31 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+setup: true
+
+orbs: 
+  continuation: circleci/continuation@0.2.0
+  jq: circleci/jq@2.2.0
+
+parameters:
+  name: changesTrue
+  type: boolean
+  default: false
+
 jobs:
-  test-install-py:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: "cimg/android:2021.10.2"
-    resource_class: small
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  generate-config:
+    executor: continuation/default
     steps:
       - checkout
+      - jq/install      
       - run: 
+          name: Check API for Scheduled Pipeline trigger type also pull id for next step
           command: |
-            sudo apt update
-            sudo apt install -y python3
-            python3.8 --version
-
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  py-workflow:
-    jobs:
-      - test-install-py
+            echo CIRCLE_SHA1
+            LAST_SHA_REVISION = $(curl -H "Circle-Token: 5379bbe97c10bae1a6944cd25fad6ac076ed84d8" 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' | jq '.items[]|select(.state == "created") | select ().trigger.type == "scheduled_pipeline") | select (.id != << pipelines.parameters.pipeline.id >>') | select (.vcs.revision ))
+            echo $LAST_SHA_REVISION 
+            # compare to sha envvar of current build 
+            # if they are the same then you circleci step halt
+          
+      - run:
+          name: use pipeline id to get revision of that scheduled pipeline
+            
