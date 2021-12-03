@@ -9,7 +9,7 @@ orbs:
 parameters:
   changesTrue:
     type: boolean
-    default: false
+    default: true
 
 jobs:
   getChanges:
