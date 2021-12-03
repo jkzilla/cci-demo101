@@ -5,44 +5,26 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-date:
+  test-install-py:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: cimg/base:stable
+      - image: "cimg/android:2021.10.2"
+    resource_class: small
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    parameters:
-      date:
-        type: string
-        default: none
     steps:
       - checkout
-      - run:
-          name: set var
-          command: echo "export DATETIME=`date +%Y%m%d.%H%M`" >> $BASH_ENV
-      - run: echo "$DATETIME"
-      - run: mkdir -p workspace
-      - run: echo "export DATETIME=datetime.`date +%Y%m%d.%H%M%S`" >>workspace/new-env-vars
-      - run: echo "export BOB=$BAZ" >> workspace/new-env-vars
-      - run: cat workspace/new-env-vars 
-      - run: cat workspace/new-env-vars >> $BASH_ENV
-      - run: echo ${DATETIME:-NULL}
       - run: 
-          name: make test artifacts
           command: |
-            mkdir /tmp/artifacts;
-            echo "my artifact files in a dir" > /tmp/artifacts/encap-staging-no-color_${DATETIME:-NULL}.txt           
-      - store_artifacts:
-          path: /tmp/artifacts
-      - persist_to_workspace:
-          root: workspace
-          paths:
-              - new-env-vars
+            sudo apt update
+            sudo apt install -y python3
+            python3.8 --version
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-date-workflow:
+  py-workflow:
     jobs:
-      - say-date
+      - test-install-py
