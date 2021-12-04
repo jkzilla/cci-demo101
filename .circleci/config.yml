@@ -29,8 +29,9 @@ jobs:
               circleci step halt
             else 
               echo "Continuing workflow"
-            fi
-      - continuation/continue
+            fi           
+      - continuation/continue:
+          configuration_path: /config/config2.yml
 workflows:
   version: 2
   runDeployIfChangesTrue:
