@@ -31,7 +31,7 @@ jobs:
               echo "Continuing workflow"
             fi           
       - continuation/continue:
-          configuration_path: /config/config2.yml
+          configuration_path: ./config/config2.yml
 workflows:
   version: 2
   runDeployIfChangesTrue:
