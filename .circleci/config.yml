@@ -24,9 +24,13 @@ jobs:
             LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
             | jq -r '.items | map(select(.id != "6b1a77cb-c030-46c7-9e65-e71683145465" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
             echo "last SHA revision: ${LAST_SHA_REVISION}"
-            # compare to sha envvar of current build 
-            # if they are the same then you circleci step halt
-
+            if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
+            then 
+              circleci step halt
+            else 
+              echo "Continuing workflow"
+            fi
+      - continuation/continue
 workflows:
   version: 2
   runDeployIfChangesTrue:
