@@ -38,6 +38,7 @@ jobs:
       - continuation/continue:
           configuration_path: ./config/config2.yml
 workflows:
+  version: 2
   deploy:
     jobs:
       - runDeployIfChangesTrue:
