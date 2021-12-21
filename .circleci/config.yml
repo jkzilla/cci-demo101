@@ -1,44 +1,27 @@
 version: 2.1
 
-setup: true 
-
 orbs: 
-  continuation: circleci/continuation@0.2.0
-  jq: circleci/jq@2.2.0
+  slack: circleci/slack@4.5.1
 
 jobs:
-  runDeployIfChangesTrue:
-    executor: continuation/default
-    resource_class: medium
+  test-install-py:
+    docker:
+      - image: "cimg/android:2021.10.2"
+    resource_class: small
     steps:
       - checkout
-      - jq/install
-      - run:
-          name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
+      - run: 
           command: |
-              CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items[0].id')
-              echo "current pipeline id: ${CURRENT_PIPELINE_ID}"
-              LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items | map(select(.id != "${CURRENT_PIPELINE_ID}" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
-                
-              echo "last SHA revision: ${LAST_SHA_REVISION}"
-              
-              if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
-                then
-                  echo "Current commit has already been built by another scheduled pipeline"
-                  echo "Not building again. Halting the job."
-                  circleci step halt;
-                else 
-                  echo "Current commit has not previously been built by another scheduled pipeline"
-                  echo "Continuing workflow to build current commit with this scheduled pipeline."
-              fi 
-      - continuation/continue:
-          configuration_path: ./config/config2.yml
+            sudo apt update
+            sudo apt install -y python3
+            python3.8 --version
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+            
 workflows:
-  version: 2
-  deploy:
+  py-workflow:
     jobs:
-      - runDeployIfChangesTrue:
+      - test-install-py:
           context:
-            - CIRCLE_TOKEN
+            - slack-orb
