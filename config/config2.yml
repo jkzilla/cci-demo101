@@ -27,4 +27,6 @@ jobs:
 workflows:
   py-workflow:
     jobs:
-      - test-install-py
+      - test-install-py:
+          context:
+            - slack-orb
