@@ -21,7 +21,8 @@ jobs:
             sudo apt install -y python3
             python3.8 --version
       - slack/notify:
-          event: always
+          event: pass
+          template: basic_success_1
             
 workflows:
   py-workflow:
