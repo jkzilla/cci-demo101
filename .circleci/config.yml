@@ -6,11 +6,6 @@ orbs:
   continuation: circleci/continuation@0.2.0
   jq: circleci/jq@2.2.0
 
-parameters:
-  triggered_by_scheduled:
-    type: boolean
-    default: false
-
 jobs:
   runDeployIfChangesTrue:
     executor: continuation/default
@@ -19,12 +14,14 @@ jobs:
       - checkout
       - jq/install
       - when:
-          condition: <<pipeline.parameters.triggered_by_scheduled>>
           steps:  
             - run: 
             # in the scheduled pipeline definition add a boolean  triggered_by_scheduled parameter set to true . The pipeline parameter needs to also be declared in the config. And the step "Check API for Scheduled Pipeline trigger type also pull id for next step" would be conditioned on this parameter being true. Otherwise it doesn't do this whole check, and simply continues
                 name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
                 command: |
+                    CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
+                      | jq -r '.items[0].id)
+                    echo "current pipeline id: ${CURRENT_PIPELINE_ID)
                     LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
                       | jq -r '.items | map(select(.id != "6b1a77cb-c030-46c7-9e65-e71683145465" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
                       
