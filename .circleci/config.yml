@@ -13,29 +13,26 @@ jobs:
     steps:
       - checkout
       - jq/install
-      - when:
-          steps:  
-            - run: 
-            # in the scheduled pipeline definition add a boolean  triggered_by_scheduled parameter set to true . The pipeline parameter needs to also be declared in the config. And the step "Check API for Scheduled Pipeline trigger type also pull id for next step" would be conditioned on this parameter being true. Otherwise it doesn't do this whole check, and simply continues
-                name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
-                command: |
-                    CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                      | jq -r '.items[0].id)
-                    echo "current pipeline id: ${CURRENT_PIPELINE_ID)
-                    LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                      | jq -r '.items | map(select(.id != "6b1a77cb-c030-46c7-9e65-e71683145465" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
-                      
-                    echo "last SHA revision: ${LAST_SHA_REVISION}"
-                    
-                    if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
-                      then
-                        echo "Current commit has already been built by another scheduled pipeline"
-                        echo "Not building again. Halting the job."
-                        circleci step halt;
-                      else 
-                        echo "Current commit has not previously been built by another scheduled pipeline"
-                        echo "Continuing workflow to build current commit with this scheduled pipeline."
-                    fi 
+      - run:
+          name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
+          command: |
+              CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
+                | jq -r '.items[0].id)
+              echo "current pipeline id: ${CURRENT_PIPELINE_ID)
+              LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
+                | jq -r '.items | map(select(.id != "6b1a77cb-c030-46c7-9e65-e71683145465" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
+                
+              echo "last SHA revision: ${LAST_SHA_REVISION}"
+              
+              if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
+                then
+                  echo "Current commit has already been built by another scheduled pipeline"
+                  echo "Not building again. Halting the job."
+                  circleci step halt;
+                else 
+                  echo "Current commit has not previously been built by another scheduled pipeline"
+                  echo "Continuing workflow to build current commit with this scheduled pipeline."
+              fi 
       - continuation/continue:
           configuration_path: ./config/config2.yml
 workflows:
