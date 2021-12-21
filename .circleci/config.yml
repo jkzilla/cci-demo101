@@ -18,7 +18,7 @@ jobs:
           command: |
               CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
                 | jq -r '.items[0].id')
-              echo "current pipeline id: $(CURRENT_PIPELINE_ID)"
+              echo "current pipeline id: ${CURRENT_PIPELINE_ID}"
               LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
                 | jq -r '.items | map(select(.id != "$(CURRENT_PIPELINE_ID)" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
                 
