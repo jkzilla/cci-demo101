@@ -17,7 +17,7 @@ jobs:
           name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
           command: |
               CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items[0].id)
+                | jq -r '.items[0].id')
               echo "current pipeline id: ${CURRENT_PIPELINE_ID)"
               LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
                 | jq -r '.items | map(select(.id != "6b1a77cb-c030-46c7-9e65-e71683145465" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
