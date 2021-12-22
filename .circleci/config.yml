@@ -14,8 +14,7 @@ jobs:
       - checkout
       - run: 
           command: |
-            export TZ=UTC >> $ BASH_ENV
-            echo ${TZ}
+            ruby utc.rb
       - slack/notify:
           event: pass
           template: basic_success_1
