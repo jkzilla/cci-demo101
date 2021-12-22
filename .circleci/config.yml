@@ -6,15 +6,15 @@ orbs:
 jobs:
   test-install-py:
     docker:
-      - image: "cimg/android:2021.10.2"
+      - image: "cimg/ruby:2.7.2-node"
     resource_class: small
+    environment:
+      TZ: "Etc/UTC"
     steps:
       - checkout
       - run: 
           command: |
-            sudo apt update
-            sudo apt install -y python3
-            python3.8 --version
+            echo ${TZ}
       - slack/notify:
           event: pass
           template: basic_success_1
