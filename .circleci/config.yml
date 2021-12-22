@@ -12,16 +12,16 @@ jobs:
       TZ: ""
     steps:
       - checkout
-      - run: 
+      - run:
           command: |
-            ruby utc.rb
-      - slack/notify:
-          event: pass
-          template: basic_success_1
+            while true; do
+              sleep 180
+              echo "=== HALT ==="
+              circleci step halt
+            done
+          background: true
             
 workflows:
   py-workflow:
     jobs:
-      - test-install-py:
-          context:
-            - slack-orb
+      - test-install-py
