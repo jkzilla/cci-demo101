@@ -14,7 +14,7 @@ jobs:
       - checkout
       - run: 
           command: |
-            export TZ=:characters >> $ BASH_ENV
+            export TZ=UTC >> $ BASH_ENV
             echo ${TZ}
       - slack/notify:
           event: pass
