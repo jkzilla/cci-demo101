@@ -1,0 +1,62 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+  continuation: circleci/continuation@0.1.2
+
+setup: true
+
+parameters:
+  workflow:
+    type: string
+    default: ""
+
+jobs:
+  test-workflow-continuation-config:
+    executor:
+      name: node/default 
+    resource_class: small
+    
+    steps:
+      - checkout
+      - run:
+          command: |
+            echo << pipeline.id >>
+      - when:
+          condition:
+            equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]    
+          steps:
+            - run:
+                command: |
+                  echo "hi"
+                  - run:
+                      name: Using the schedule name to trigger
+                      command: echo "<< pipeline.schedule.name >>" >> $WORKFLOW_FILE
+      - unless:
+          condition:
+            equal: [ << pipeline.trigger_source >>, webhook ]
+          steps:
+            - run:
+                name: Generate the list of workflows to run
+                command: |
+                  export MANUAL_WORKFLOW="<< pipeline.parameters.workflow >>"
+      - run:
+          name: Generate parameters passed to the next level
+          command: echo "{}" > /tmp/custom-pipeline-parameters.json
+      - store_artifacts:
+          path: "workflows"
+      - store_artifacts:
+          path: "compiled.yml"
+      - run:
+          command: |
+            cd .circleci
+            ls
+            pwd
+      - continuation/continue:
+          configuration_path: /home/circleci/project/compiled.yml"
+          parameters: /tmp/custom-pipeline-parameters.json
+
+workflows:
+  workflor-for-test-workflow-continuation-config:
+    jobs: 
+      - test-workflow-continuation-config
