@@ -10,8 +10,8 @@ parameters:
 
 jobs:
   test-ci-backend::
-    docker:
-      - image: node/default 
+    executor:
+      name: node/default 
     resource_class: small
     steps:
       - checkout
