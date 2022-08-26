@@ -13,8 +13,8 @@ parameters:
 
 jobs:
   test-workflow-continuation-config:
-    docker:
-      - image: node/default 
+    executor:
+      name: node/default 
     resource_class: small
     
     steps:
