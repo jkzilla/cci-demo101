@@ -22,29 +22,24 @@ jobs:
       - run:
           command: |
             echo << pipeline.id >>
-      # - when:
-      #     condition:
-      #       equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]    
-      #     steps:
-      #       - run:
-      #           command: |
-      #             echo "hi"
-      #             - run:
-      #                 name: Using the schedule name to trigger
-      #                 command: echo "<< pipeline.schedule.name >>" >> $WORKFLOW_FILE
-      # - unless:
-      #     condition:
-      #       equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]
-      #     steps:
-      #       - run:
-      #           name: Generate the list of workflows to run
-      #           command: |
-      #             export MANUAL_WORKFLOW="<< pipeline.parameters.workflow >>"
-      #             ./.circleci/scripts/determine_workflows.sh
-      #             ./.circleci/scripts/snub_github_checks.sh
-      # - run:
-      #     name: Compile all workflows into a single YAML file
-      #     command: ./.circleci/scripts/compile_yml.sh
+      - when:
+          condition:
+            equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]    
+          steps:
+            - run:
+                command: |
+                  echo "hi"
+                  - run:
+                      name: Using the schedule name to trigger
+                      command: echo "<< pipeline.schedule.name >>" >> $WORKFLOW_FILE
+      - unless:
+          condition:
+            equal: [ << pipeline.trigger_source >>, webhook ]
+          steps:
+            - run:
+                name: Generate the list of workflows to run
+                command: |
+                  export MANUAL_WORKFLOW="<< pipeline.parameters.workflow >>"
       - run:
           name: Generate parameters passed to the next level
           command: echo "{}" > /tmp/custom-pipeline-parameters.json
