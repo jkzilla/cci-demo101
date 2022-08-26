@@ -1,0 +1,22 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+parameters:
+  workflow:
+    type: string
+    default: ""
+
+jobs:
+  test-ci-backend::
+    docker:
+      - image: node/default 
+    resource_class: small
+    steps:
+      - checkout
+      
+workflows:
+  test-ci-backend:
+    jobs:
+      - run-ci-backend-tests
