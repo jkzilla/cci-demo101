@@ -53,7 +53,7 @@ jobs:
             ls
             pwd
       - continuation/continue:
-          configuration_path: /home/circleci/project/.circleci/compiled.yml"
+          configuration_path: /home/circleci/project/compiled.yml"
           parameters: /tmp/custom-pipeline-parameters.json
 
 workflows:
