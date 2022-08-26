@@ -47,6 +47,10 @@ jobs:
           path: "workflows"
       - store_artifacts:
           path: "compiled.yml"
+      - run:
+          command: |
+            cd .circleci
+            pwd
       - continuation/continue:
           configuration_path: "/.circleci/compiled.yml"
           parameters: /tmp/custom-pipeline-parameters.json
