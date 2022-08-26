@@ -50,9 +50,10 @@ jobs:
       - run:
           command: |
             cd .circleci
+            ls
             pwd
       - continuation/continue:
-          configuration_path: "/.circleci/compiled.yml"
+          configuration_path: /home/circleci/project/.circleci/compiled.yml"
           parameters: /tmp/custom-pipeline-parameters.json
 
 workflows:
