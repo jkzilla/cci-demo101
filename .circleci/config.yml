@@ -22,6 +22,7 @@ jobs:
       - run:
           command: |
             echo << pipeline.id >>
+            echo << pipeline.trigger_source >>
       - when:
           condition:
             equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]    
