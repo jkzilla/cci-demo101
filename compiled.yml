@@ -9,7 +9,7 @@ parameters:
     default: ""
 
 jobs:
-  test-ci-backend::
+  test-ci-backend:
     executor:
       name: node/default 
     resource_class: small
