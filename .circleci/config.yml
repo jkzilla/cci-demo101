@@ -27,7 +27,7 @@ jobs:
             - run:
                 name: Using the schedule name to trigger
                 command: |
-                  echo "{ << pipeline.schedule.name >> }" > workflow-file.txt
+                  echo "{ "workflow": "<< pipeline.schedule.name >>" }" > workflow-file.txt
                   cat worklow-file.txt
       - run:
           name: Generate parameters passed to the next level
@@ -56,7 +56,7 @@ jobs:
       - run:
           command: |
             echo << pipeline.id >>
-            echo " { << pipeline.trigger_source >> } " >> workflow-file.txt
+            echo " { "workflow": "<< pipeline.trigger_source >> ""} " >> workflow-file.txt
       - run:
           name: Generate parameters passed to the next level
           command: |
