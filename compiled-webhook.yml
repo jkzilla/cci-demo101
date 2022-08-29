@@ -10,7 +10,8 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      - echo "I'm a webhook"
+      - run:
+          command: echo "I'm a webhook"
       
 workflows:
   test-commit-backend:

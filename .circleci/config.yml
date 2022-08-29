@@ -58,7 +58,7 @@ jobs:
           command: |
             sudo apt-get install jq
             echo << pipeline.id >>
-            echo '{ "workflow": "<< pipeline.trigger_source >> "}' | jq '.' >> workflow-file.txt
+            echo '{ "workflow": "<< pipeline.trigger_source >>"}' | jq '.' >> workflow-file.txt
       - run:
           name: Generate parameters passed to the next level
           command: |
