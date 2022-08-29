@@ -1,0 +1,18 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+jobs:
+  run-commit-backend-tests:
+    executor:
+      name: node/default 
+    resource_class: small
+    steps:
+      - checkout
+      - echo "I'm a webhook"
+      
+workflows:
+  test-commit-backend:
+    jobs:
+      - run-commit-backend-tests
