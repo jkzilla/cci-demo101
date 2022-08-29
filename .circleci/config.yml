@@ -88,5 +88,6 @@ workflows:
     when:
       and:  
         - equal: [ webhook, << pipeline.trigger_source >> ]
+        - equal: [ "test-ci-backend", << pipeline.schedule.name >> ]
     jobs: 
       - test-workflow-continuation-config2 
