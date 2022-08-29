@@ -27,7 +27,8 @@ jobs:
             - run:
                 name: Using the schedule name to trigger
                 command: |
-                  echo "{ "workflow": "<< pipeline.schedule.name >>" }" > workflow-file.txt
+                  sudo apt-get install jq
+                  echo "{ "workflow": "<< pipeline.schedule.name >>" }" | jq '.' > workflow-file.txt
                   cat worklow-file.txt
       - run:
           name: Generate parameters passed to the next level
@@ -55,8 +56,9 @@ jobs:
       - checkout
       - run:
           command: |
+            sudo apt-get install jq
             echo << pipeline.id >>
-            echo " { "workflow": "<< pipeline.trigger_source >> "} " >> workflow-file.txt
+            echo " { "workflow": "<< pipeline.trigger_source >> "} " | jq '.' >> workflow-file.txt
       - run:
           name: Generate parameters passed to the next level
           command: |
