@@ -16,5 +16,9 @@ jobs:
       
 workflows:
   test-ci-backend:
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        - equal: [ "test-ci-backend", << pipeline.schedule.name >> ]
     jobs:
       - run-ci-backend-tests
