@@ -56,7 +56,7 @@ jobs:
       - run:
           command: |
             echo << pipeline.id >>
-            echo " { "workflow": "<< pipeline.trigger_source >> ""} " >> workflow-file.txt
+            echo " { "workflow": "<< pipeline.trigger_source >> "} " >> workflow-file.txt
       - run:
           name: Generate parameters passed to the next level
           command: |
