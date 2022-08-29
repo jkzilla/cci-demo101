@@ -47,7 +47,7 @@ jobs:
           configuration_path: "compiled.yml"
           parameters: /tmp/custom-pipeline-parameters.json
 
-  workflow-for-webhook-continuation-config:
+  test-workflow-continuation-config2:
     executor:
       name: node/default 
     resource_class: small
