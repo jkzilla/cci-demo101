@@ -1,26 +1,20 @@
-
 version: 2.1
+orbs:
+  win: circleci/windows@5.0
 
 jobs:
-  build:
-    docker:
-      - image: cimg/base:2022.01
+  create-cli-windows:
+    executor: win/default
     steps:
       - checkout
-      - setup_remote_docker:
-          version: "20.10.11"
       - run:
-          name: "Build Docker Images"
+          name: Build Windows CLI
+          shell: cmd.exe
           command: |
-            # ./build-images.sh
-            # docker images
-            echo 'export DOCKER_PASS=$DOCKER_TOKEN' >> $BASH_ENV
-      - run:
-          name: "Install Test Prerequisites"
-          command: |
-            echo $DOCKER_PASS
+            echo "hi"
+            echo "hi2"
 
 workflows:
-  main:
+  lint-and-test:
     jobs:
-      - build
+      - create-cli-windows
