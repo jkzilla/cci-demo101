@@ -8,8 +8,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build Windows CLI
-          shell: cmd.exe
+          name: test hi and hi2
+          shell: bash
           command: |
             echo "hi"
             echo "hi2"
