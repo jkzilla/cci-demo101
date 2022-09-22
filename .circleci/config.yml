@@ -18,3 +18,4 @@ workflows:
   lint-and-test:
     jobs:
       - create-cli-windows
+      - hugo/build
