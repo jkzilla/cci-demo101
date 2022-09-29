@@ -1,93 +1,23 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@5.0.2
-  continuation: circleci/continuation@0.1.2
-
-setup: true
-
 jobs:
-  test-workflow-continuation-config:
-    executor:
-      name: node/default 
-    resource_class: small
+  cli:
+    docker:
+      - image: cimg/go:1.18-node
     steps:
+      - run:
+          name: test CLI
+          command: |
+            which circleci
       - checkout
       - run:
+          name: validate CI config
           command: |
-            echo << pipeline.id >>
-            echo << pipeline.trigger_source >>
-      - when:
-          condition:
-            equal: [ << pipeline.trigger_source >>, scheduled_pipeline ]    
-          steps:
-            - run:
-                command: |
-                  echo "hi"
-            - run:
-                name: Using the schedule name to trigger
-                command: |
-                  sudo apt-get install jq
-                  echo '{ "workflow": "<< pipeline.schedule.name >>" }' | jq '.' > workflow-file.txt
-                  ls
-      - run:
-          name: Generate parameters passed to the next level
-          command: |
-            cp workflow-file.txt /tmp/custom-pipeline-parameters.json
-            cat /tmp/custom-pipeline-parameters.json
-      - store_artifacts:
-          path: "workflows"
-      - store_artifacts:
-          path: "compiled.yml"
-      - run:
-          command: |
-            cd .circleci
-            ls
-            pwd
-      - continuation/continue:
-          configuration_path: "compiled.yml"
-          parameters: /tmp/custom-pipeline-parameters.json
-
-  test-workflow-continuation-config2:
-    executor:
-      name: node/default 
-    resource_class: small
-    steps:
-      - checkout
-      - run:
-          command: |
-            sudo apt-get install jq
-            echo << pipeline.id >>
-            echo '{ "workflow": "<< pipeline.trigger_source >>"}' | jq '.' > workflow-file.txt
-            ls
-      - run:
-          name: Generate parameters passed to the next level
-          command: |
-            cp workflow-file.txt /tmp/custom-pipeline-parameters.json
-            cat /tmp/custom-pipeline-parameters.json
-      - store_artifacts:
-          path: "workflows"
-      - store_artifacts:
-          path: "compiled-webhook.yml"
-      - run:
-          command: |
-            cd .circleci
-            ls
-            pwd
-      - continuation/continue:
-          configuration_path: "compiled-webhook.yml"
-          parameters: /tmp/custom-pipeline-parameters.json
+            # will exit 1 with the following error:
+            #   Error: Configuration version 2.1 requires the "Enable Pipelines" project setting. Enable pipelines under Project Settings -> Advanced Settings. In order to retrigger pipelines, you must push a new commit.
+            circleci config validate
 
 workflows:
-  workflow-for-scheduled-workflow-continuation-config:
-    when:
-      and: 
-       - equal: [ test-ci-backend, << pipeline.schedule.name >> ]
-    jobs: 
-      - test-workflow-continuation-config
-  workflow-for-webhook-continuation-config:
-    when:
-      and:  
-        - equal: [ webhook, << pipeline.trigger_source >> ]
-    jobs: 
-      - test-workflow-continuation-config2 
+  main:
+    jobs:
+      - cli
