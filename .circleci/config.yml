@@ -11,12 +11,13 @@ jobs:
             which circleci
       - checkout
       - run:
-          name: validate CI config
+          name: bash env across steps
           command: |
-            # will exit 1 with the following error:
-            #   Error: Configuration version 2.1 requires the "Enable Pipelines" project setting. Enable pipelines under Project Settings -> Advanced Settings. In order to retrigger pipelines, you must push a new commit.
-            circleci config validate
-
+            echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> "$BASH_ENV"
+      - run:
+          name: bash env across steps
+          command: |
+            echo $GIT_SHA1
 workflows:
   main:
     jobs:
