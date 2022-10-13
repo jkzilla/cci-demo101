@@ -8,11 +8,16 @@ orbs:
 
 jobs:
   runDeployIfChangesTrue:
-    executor: continuation/default
-    resource_class: medium
+    machine: 
+      image: ubuntu-2004:current
+    resource_class: arm.medium
     steps:
+      - run: uname -a
+      - run: echo "Hello, Arm!"
+      - run: jq --version
       - checkout
       - jq/install
+      - run: jq --version
       - run:
           name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
           command: |
