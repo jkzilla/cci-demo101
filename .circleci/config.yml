@@ -1,49 +1,42 @@
 version: 2.1
 
-setup: true 
-
-orbs: 
-  continuation: circleci/continuation@0.2.0
-  jq: circleci/jq@2.2.0
-
 jobs:
-  runDeployIfChangesTrue:
-    machine: 
-      image: ubuntu-2004:current
-    resource_class: arm.medium
+  build_doc:
+    docker:
+      - image: julia:latest
     steps:
-      - run: uname -a
-      - run: echo "Hello, Arm!"
-      - run: jq --version
-      - checkout
-      - jq/install
-      - run: jq --version
       - run:
-          name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
-          command: |
-              CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items[0].id')
-              echo "current pipeline id: ${CURRENT_PIPELINE_ID}"
-              LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items | map(select(.id != "${CURRENT_PIPELINE_ID}" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
-                
-              echo "last SHA revision: ${LAST_SHA_REVISION}"
-              
-              if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
-                then
-                  echo "Current commit has already been built by another scheduled pipeline"
-                  echo "Not building again. Halting the job."
-                  circleci step halt;
-                else 
-                  echo "Current commit has not previously been built by another scheduled pipeline"
-                  echo "Continuing workflow to build current commit with this scheduled pipeline."
-              fi 
-      - continuation/continue:
-          configuration_path: ./config/config2.yml
+          name: install git
+          command: apt-get update && apt-get install -y git
+      - checkout
+      - run:
+          name: install package 
+          # Workaround for scipy build issue: https://github.com/JuliaPy/PyCall.jl/issues/990#issuecomment-1224878410
+          command: julia --project=docs -e 'using Pkg; 
+            Pkg.develop(PackageSpec(path=pwd())); 
+            Pkg.instantiate(); 
+            Pkg.add("PyPlot");
+            Pkg.add("Distributions");
+            ENV["PYTHON"] = "";
+            Pkg.add("Conda");
+            Pkg.add("PyCall");
+            Pkg.build("PyCall");
+            Pkg.build("Conda");
+            using PyCall;
+            using Conda;
+            Conda.add("gcc=12.1.0", channel="conda-forge");
+            Conda.add("scikit-image");
+            Conda.add("scipy=1.8.0");
+      - run:
+          name: Build docs
+          command: julia --project=docs docs/make.jl
+          environment:
+            CI: true
+      - store_artifacts:
+          path: docs/build/
+          destination: html
+
 workflows:
-  version: 2
-  deploy:
+  main:
     jobs:
-      - runDeployIfChangesTrue:
-          context:
-            - CIRCLE_TOKEN
+      - build_doc
