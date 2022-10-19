@@ -1,43 +1,48 @@
-version: 2.1
-
+version: '2.1'
+orbs:
+  slack: circleci/slack@4.1
 jobs:
-  build_doc:
+  deploy:
     docker:
-      - image: julia:latest
+      - image: 'cimg/base:stable'
     steps:
-      - run:
-          name: install git
-          command: apt-get update && apt-get install -y git
-      - checkout
-      - run:
-          name: install package 
-          # Workaround for scipy build issue: https://github.com/JuliaPy/PyCall.jl/issues/990#issuecomment-1224878410
-          command: julia --project=docs -e 'using Pkg; 
-            Pkg.develop(PackageSpec(path=pwd())); 
-            Pkg.instantiate(); 
-            Pkg.add("PyPlot");
-            Pkg.add("Distributions");
-            ENV["PYTHON"] = "";
-            Pkg.add("Conda");
-            Pkg.add("PyCall");
-            Pkg.build("PyCall");
-            Pkg.build("Conda");
-            using PyCall;
-            using Conda;
-            Conda.add("gcc=12.1.0", channel="conda-forge");
-            Conda.add("scikit-image");
-            Conda.add("scipy=1.8.0");
-            '
-      - run:
-          name: Build docs
-          command: julia --project=docs docs/make.jl
-          environment:
-            CI: true
-      - store_artifacts:
-          path: docs/build/
-          destination: html
-
+      - run: echo "deploy my app"
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
+  test:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - run: echo "test my app"
 workflows:
-  main:
+  test-and-deploy:
     jobs:
-      - build_doc
+      - test
+      - slack/on-hold:
+          context: slack-secrets
+          filters:
+            tags:
+              only: /^v.*/
+          requires:
+            - test
+      - pause_workflow:
+          filters:
+            tags:
+              only: /^v.*/
+          requires:
+            - test
+            - slack/on-hold
+          type: approval
+      - deploy:
+          filters:
+            tags:
+              only: /^v.*/
+          requires:
+            - pause_workflow
+
+# VS Code Extension Version: 1.0.0
