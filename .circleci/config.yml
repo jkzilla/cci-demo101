@@ -13,11 +13,11 @@ jobs:
       - run:
           name: bash env across steps
           command: |
-            echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> "$BASH_ENV"
+            echo "i'm a change to be one ahead of staging2"
       - run:
           name: bash env across steps
           command: |
-            echo $GIT_SHA1
+            echo "i'm a change to be one ahead of staging2"
 workflows:
   main:
     jobs:
