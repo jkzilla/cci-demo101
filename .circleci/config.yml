@@ -13,7 +13,7 @@ jobs:
       - run:
           name: bash env across steps
           command: |
-            echo 'hi"
+            echo "hi"
       - run:
           name: bash env across steps
           command: |
