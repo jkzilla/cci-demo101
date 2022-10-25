@@ -13,11 +13,11 @@ jobs:
       - run:
           name: bash env across steps
           command: |
-            echo "i'm a change"
+            echo "i'm a change to be one ahead of staging"
       - run:
           name: bash env across steps
           command: |
-            echo "i'm a change"
+            echo "i'm a change to be one ahead of staging"
 workflows:
   main:
     jobs:
