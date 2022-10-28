@@ -1,9 +1,11 @@
 version: 2.1
 
 jobs:
-  cli:
-    docker:
-      - image: cimg/go:1.18-node
+  pr-windows:
+    machine:
+      image: windows-server-2019-vs2019:2022.08.1
+      shell: bash.exe
+    resource_class: windows.2xlarge
     steps:
       - run:
           name: test CLI
@@ -11,16 +13,17 @@ jobs:
             which circleci
       - checkout
       - run:
-          name: bash env across steps
+          name: df
           command: |
-            echo "i'm a change to be one ahead of staging2"
+            df -h
       - run:
-          name: bash env across steps
+          name: xyz
           command: |
-            echo "i'm a change to be one ahead of staging2"
+            echo "i'm a change"
 workflows:
   main:
     jobs:
-      - cli
+      - pr-windows
+
 
 # VS Code Extension Version: 1.0.0
