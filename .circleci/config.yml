@@ -1,24 +1,59 @@
-version: 2.1
 
-jobs:
-  cli:
-    docker:
-      - image: cimg/go:1.18-node
-    steps:
-      - run:
-          name: test CLI
-          command: |
-            which circleci
-      - checkout
-      - run:
-          name: bash env across steps
-          command: |
-            echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> "$BASH_ENV"
-      - run:
-          name: bash env across steps
-          command: |
-            echo $GIT_SHA1
+version: '2.1'
+
+setup: true 
+orbs:
+  path-filtering: circleci/path-filtering@0.1.3
+
+parameters:
+  project1:
+    description: is this Project1?
+    type: boolean
+    default: false
+ 
+  project2:
+    description: is this Project1?
+    type: boolean
+    default: false
+
+  project3:
+    description: is this Project1?
+    type: boolean
+    default: true
+
 workflows:
-  main:
+  generate-config1:
+    when:
+      or:
+        - equal: [true, << pipeline.parameters.project1 >>]
     jobs:
-      - cli
+      - path-filtering/filter:
+          base-revision: main
+          config-path: .circleci/continue-config1.yml
+          mapping: |
+            src/.* build-code true
+            doc/.* build-docs true
+  generate-config2:
+    when:
+      or:
+        - equal: [true, << pipeline.parameters.project2 >>]
+    jobs:
+      - path-filtering/filter:
+          base-revision: main
+          config-path: .circleci/continue-config2.yml
+          mapping: |
+            src/.* build-code true
+            doc/.* build-docs true
+  generate-config3:
+    when:
+      or:
+        - equal: [true, << pipeline.parameters.project3 >>]
+    jobs:
+      - path-filtering/filter:
+          base-revision: main
+          config-path: .circleci/continue-config2.yml
+          mapping: |
+            src/.* build-code true
+            doc/.* build-docs true
+
+# VS Code Extension Version: 1.0.0
