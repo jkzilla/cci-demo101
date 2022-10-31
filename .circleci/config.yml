@@ -1,5 +1,5 @@
 
-version: '2.1'
+version: 2.1
 
 setup: true 
 orbs:
@@ -12,15 +12,24 @@ parameters:
     default: false
  
   project2:
-    description: is this Project1?
+    description: is this Project2?
     type: boolean
     default: false
 
   project3:
-    description: is this Project1?
+    description: is this Project3?
     type: boolean
     default: true
 
+  build-code:
+    description: do we build code?
+    type: boolean
+    default: true
+
+  build-docs:
+    description: do we build docs?
+    type: boolean
+    default: false
 workflows:
   generate-config1:
     when:
@@ -28,7 +37,7 @@ workflows:
         - equal: [true, << pipeline.parameters.project1 >>]
     jobs:
       - path-filtering/filter:
-          base-revision: main
+          base-revision: master
           config-path: .circleci/continue-config1.yml
           mapping: |
             src/.* build-code true
@@ -39,7 +48,7 @@ workflows:
         - equal: [true, << pipeline.parameters.project2 >>]
     jobs:
       - path-filtering/filter:
-          base-revision: main
+          base-revision: master
           config-path: .circleci/continue-config2.yml
           mapping: |
             src/.* build-code true
@@ -50,8 +59,8 @@ workflows:
         - equal: [true, << pipeline.parameters.project3 >>]
     jobs:
       - path-filtering/filter:
-          base-revision: main
-          config-path: .circleci/continue-config2.yml
+          base-revision: master
+          config-path: .circleci/continue-config3.yml
           mapping: |
             src/.* build-code true
             doc/.* build-docs true
