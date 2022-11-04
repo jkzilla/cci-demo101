@@ -1,68 +1,22 @@
+setup: true
 
 version: 2.1
 
-setup: true 
 orbs:
-  path-filtering: circleci/path-filtering@0.1.3
+  continuation: circleci/continuation@0.3.1
 
-parameters:
-  project1:
-    description: is this Project1?
-    type: boolean
-    default: false
- 
-  project2:
-    description: is this Project2?
-    type: boolean
-    default: false
-
-  project3:
-    description: is this Project3?
-    type: boolean
-    default: true
-
-  build-code:
-    description: do we build code?
-    type: boolean
-    default: true
-
-  build-docs:
-    description: do we build docs?
-    type: boolean
-    default: false
 workflows:
-  generate-config1:
-    when:
-      or:
-        - equal: [true, << pipeline.parameters.project1 >>]
+  setup:
     jobs:
-      - path-filtering/filter:
-          base-revision: master
-          config-path: .circleci/continue-config1.yml
-          mapping: |
-            src/.* build-code true
-            doc/.* build-docs true
-  generate-config2:
-    when:
-      or:
-        - equal: [true, << pipeline.parameters.project2 >>]
-    jobs:
-      - path-filtering/filter:
-          base-revision: master
-          config-path: .circleci/continue-config2.yml
-          mapping: |
-            src/.* build-code true
-            doc/.* build-docs true
-  generate-config3:
-    when:
-      or:
-        - equal: [true, << pipeline.parameters.project3 >>]
-    jobs:
-      - path-filtering/filter:
-          base-revision: master
-          config-path: .circleci/continue-config3.yml
-          mapping: |
-            src/.* build-code true
-            doc/.* build-docs true
+      - continuation/continue:
+          configuration_path: ".circleci/continue-config1.yml"
+          parameters: /home/circleci/parameters.json
+          pre-steps:
+            - checkout
+            - run:
+                name: Which branch?
+                command: |
+                  echo << pipeline.git.branch >> /home/circleci/parameters.json
+                  cat /home/circleci/parameters.json
 
-# VS Code Extension Version: 1.0.0
+# VS Code Extension Version: 1.0.1
