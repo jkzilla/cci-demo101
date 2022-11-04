@@ -13,7 +13,7 @@ workflows:
           parameters: /home/circleci/parameters.json
           pre-steps:
             when:
-              equal: [ << "jkg/test-continuation-when", << pipeline.git.branch >> ]
+              equal: [ << jkg/test-continuation-when, << pipeline.git.branch >> ]
             steps:
               - checkout
               - run:
