@@ -12,11 +12,14 @@ workflows:
           configuration_path: ".circleci/continue-config1.yml"
           parameters: /home/circleci/parameters.json
           pre-steps:
-            - checkout
-            - run:
-                name: Based on branch, choose executor
-                command: |
-                  sed -i 's/base\:edge/node\:latest/g' ./.circleci/continue-config1.yml
-                  cat ./.circleci/continue-config1.yml
+            when:
+              equal: [ << main, << pipeline.git.branch >> ]
+            steps:
+              - checkout
+              - run:
+                  name: Based on branch, choose executor
+                  command: |
+                    sed -i 's/base\:edge/node\:latest/g' ./.circleci/continue-config1.yml
+                    cat ./.circleci/continue-config1.yml
 
 # VS Code Extension Version: 1.0.1
