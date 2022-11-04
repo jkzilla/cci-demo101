@@ -14,7 +14,6 @@ workflows:
           configuration_path: ".circleci/continue-config1.yml"
           parameters: /home/circleci/parameters.json
           pre-steps:
-            steps:
               - checkout
               - run:
                   name: Based on branch, choose executor
