@@ -14,10 +14,11 @@ workflows:
           pre-steps:
             - checkout
             - run:
-                name: Which branch?
+                name: Based on branch, choose executor
                 command: |
                   touch /home/circleci/parameters.json
                   echo '{ "BRANCH": "<< pipeline.git.branch >>" }' >> /home/circleci/parameters.json
                   cat /home/circleci/parameters.json
+                  sed 's/^cimg/base:edge.*/cimg/node:latest/' ~/.circleci/continue-config1.yml
 
 # VS Code Extension Version: 1.0.1
