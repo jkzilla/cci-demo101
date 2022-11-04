@@ -1,0 +1,27 @@
+version: 2.1
+
+paramaters:
+  isBranch:
+    type: string
+    default: ""
+executors:
+  main_config:
+    docker:
+      - image: cimg/base:edge
+
+jobs:
+  build:
+    executor: main_config
+    steps:
+      - run:
+          command: |
+            echo "hi"
+      - checkout
+      - run: echo "test"
+
+workflows:
+  main-branch:
+    jobs:
+     - build
+
+# VS Code Extension Version: 1.0.1
