@@ -16,7 +16,8 @@ workflows:
             - run:
                 name: Which branch?
                 command: |
-                  echo << pipeline.git.branch >> /home/circleci/parameters.json
+                  touch /home/circleci/parameters.json
+                  echo << pipeline.git.branch >> >> /home/circleci/parameters.json
                   cat /home/circleci/parameters.json
 
 # VS Code Extension Version: 1.0.1
