@@ -16,9 +16,6 @@ workflows:
             - run:
                 name: Based on branch, choose executor
                 command: |
-                  touch /home/circleci/parameters.json
-                  echo '{ "BRANCH": "<< pipeline.git.branch >>" }' >> /home/circleci/parameters.json
-                  cat /home/circleci/parameters.json
-                  sed '/cimg\/base\:edge/c\cimg\/node\:latest' ./.circleci/continue-config1.yml
+                  sed '/\ \ \ \ \ \ \-\ image\:\ \cimg\/base:edge/c\\ \ \ \ \ \ \-\ image\:\ \cimg\/node\:latest' ./.circleci/continue-config1.yml
 
 # VS Code Extension Version: 1.0.1
