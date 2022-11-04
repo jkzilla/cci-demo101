@@ -11,7 +11,7 @@ workflows:
       - continuation/continue:
           configuration_path: ".circleci/continue-config1.yml"
           parameters: /home/circleci/parameters.json
-          pre-steps:
+          steps:
             when:
               equal: [ jkg/test-continuation-when, << pipeline.git.branch >> ]
             steps:
