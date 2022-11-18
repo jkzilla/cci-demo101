@@ -1,26 +1,45 @@
 version: 2.1
 
-jobs:
-  cli:
-    docker:
-      - image: cimg/go:1.18-node
-    steps:
-      - run:
-          name: test CLI
-          command: |
-            which circleci
-      - checkout
-      - run:
-          name: bash env across steps
-          command: |
-            echo "i'm a change to be one ahead of staging2"
-      - run:
-          name: bash env across steps
-          command: |
-            echo "i'm a change to be one ahead of staging2"
-workflows:
-  main:
-    jobs:
-      - cli
+orbs:
+  win: circleci/windows@4.1.1
 
-# VS Code Extension Version: 1.0.0
+jobs:
+  build:
+    executor:
+      name: win/server-2022
+      size: medium
+    working_directory: ~/project
+    steps: 
+      - run:
+          name: Install JDK in the background
+          command: |          
+            curl -o jdk.zip -L https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_x64_windows_hotspot_17.0.2_8.zip
+            mkdir /c/Program\ Files/Adoptium/
+            tar xfz jdk.zip -C /c/Program\ Files/Adoptium/
+            rm jdk.zip
+            touch /tmp/jdk.txt
+          shell: bash.exe
+          background: true
+
+      - run:
+          name: Install Maven in the background
+          command: |
+            choco install maven -y
+            touch /tmp/maven.txt
+            exit 1
+          shell: bash.exe
+          background: true
+
+      - checkout
+      # - when:
+      #     condition: 
+      #       equal: ["[(\"checkout\")]", "<< parameters.after-deps >>"]
+      #     steps:
+      #       - run: echo "No steps provided"
+
+workflows:
+  workflow:
+    jobs:
+      - build
+
+# VS Code Extension Version: 1.0.2
