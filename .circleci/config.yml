@@ -1,44 +1,45 @@
 version: 2.1
 
-setup: true 
-
-orbs: 
-  continuation: circleci/continuation@0.2.0
-  jq: circleci/jq@2.2.0
+orbs:
+  win: circleci/windows@4.1.1
 
 jobs:
-  runDeployIfChangesTrue:
-    executor: continuation/default
-    resource_class: medium
-    steps:
-      - checkout
-      - jq/install
+  build:
+    executor:
+      name: win/server-2022
+      size: medium
+    working_directory: ~/project
+    steps: 
       - run:
-          name: If pipeline not a scheduled trigger, continue. If scheduled trigger AND SHA changed, continue. if scheduled trigger and sha has not changed, halt.
+          name: Install JDK in the background
+          command: |          
+            curl -o jdk.zip -L https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_x64_windows_hotspot_17.0.2_8.zip
+            mkdir /c/Program\ Files/Adoptium/
+            tar xfz jdk.zip -C /c/Program\ Files/Adoptium/
+            rm jdk.zip
+            touch /tmp/jdk.txt
+          shell: bash.exe
+          background: true
+
+      - run:
+          name: Install Maven in the background
           command: |
-              CURRENT_PIPELINE_ID=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items[0].id')
-              echo "current pipeline id: ${CURRENT_PIPELINE_ID}"
-              LAST_SHA_REVISION=$(curl -H 'Circle-Token: $CIRCLE_TOKEN' -s 'https://circleci.com/api/v2/project/github/jkzilla/cci-demo101b/pipeline?branch=master' \
-                | jq -r '.items | map(select(.id != "${CURRENT_PIPELINE_ID}" and .trigger.type == "scheduled_pipeline" and .state == "created") | .vcs.revision) | .[0]')
-                
-              echo "last SHA revision: ${LAST_SHA_REVISION}"
-              
-              if [ ${LAST_SHA_REVISION} == ${CIRCLE_SHA1} ];
-                then
-                  echo "Current commit has already been built by another scheduled pipeline"
-                  echo "Not building again. Halting the job."
-                  circleci step halt;
-                else 
-                  echo "Current commit has not previously been built by another scheduled pipeline"
-                  echo "Continuing workflow to build current commit with this scheduled pipeline."
-              fi 
-      - continuation/continue:
-          configuration_path: ./config/config2.yml
+            choco install maven -y
+            touch /tmp/maven.txt
+            exit 1
+          shell: bash.exe
+          background: true
+
+      - checkout
+      # - when:
+      #     condition: 
+      #       equal: ["[(\"checkout\")]", "<< parameters.after-deps >>"]
+      #     steps:
+      #       - run: echo "No steps provided"
+
 workflows:
-  version: 2
-  deploy:
+  workflow:
     jobs:
-      - runDeployIfChangesTrue:
-          context:
-            - CIRCLE_TOKEN
+      - build
+
+# VS Code Extension Version: 1.0.2
